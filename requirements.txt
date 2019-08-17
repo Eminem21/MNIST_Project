@@ -1,0 +1,6 @@
+cassandra-driver
+pillow
+flask
+tensorflow
+-i https://pypi.tuna.tsinghua.edu.cn/simple/
+
