@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <title>Handwriting Predict</title>
     <style>
@@ -11,17 +11,17 @@
                 font-size:50px;
             }
     </style>
-</head>
-<body>
-<center>
-<div class="box">
+  </head>
+  <body>
+    <center>
+      <div class="box">
       <form action = "http://localhost:5000/predict" method = "POST" target="myIframe"
          enctype = "multipart/form-data" >
-         <input type = "file" name = "file" />
+         <input type = "file" name = "file"/>
          <input type = "submit"/>
       </form>
-</div>
-      <iframe id="myIframe" name="myIframe" style="width:300px;height:40px;"></iframe>
-</body>
-</center>
+      </div>
+      <iframe id="myIframe" name="myIframe" style="width:300px;height:40px;"></iframe> 
+    </center>
+  </body>
 </html>

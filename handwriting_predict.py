@@ -3,19 +3,23 @@ from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from cassandra.cluster import Cluster
 from cassandra.policies import DCAwareRoundRobinPolicy
+
 import tensorflow as tf
-#import matplotlib.pyplot as plt
 import os
 import datetime
 
+#define the name of keyspace in cassandra
 KEYSPACE="mnistkeyspace"
 
-cluster = Cluster(contact_points=['kehan-cassandra'], port=9042)
+#connect to cassandra and create the keyspace
+cluster = Cluster(contact_points=['mnist-cassandra'], port=9042)
 session = cluster.connect()
 session.execute("""
            CREATE KEYSPACE %s
            WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '2' }
            """ % KEYSPACE)
+
+#enter the keyspace and create a table
 session.set_keyspace(KEYSPACE)
 session.execute("""
            CREATE TABLE predictrecord (
@@ -25,27 +29,55 @@ session.execute("""
                PRIMARY KEY (time)
            )
            """)
+
+#initalize the flask app
 app = Flask(__name__)
+
+
 @app.route('/upload')
 def upload_file():
+   """
+   if the route is '/upload'
+   show the html file that can be find in the 'template file folder' 
+   which named 'handwriting_webpage.html'
+   """
    return render_template('handwriting_webpage.html')
 
 @app.route('/predict', methods = ['GET', 'POST'])
 def predict():
    if request.method == 'POST':
+        
         f = request.files['file']
-        basepath = os.path.dirname(__file__)  # 当前文件所在路径
+
+        #find the path of current file 
+        basepath = os.path.dirname(__file__)
+
+        #find the path of the file that is used to save images
         upload_path = os.path.join(basepath, 'upload_file',secure_filename(f.filename))
-        upload_path = os.path.abspath(upload_path) # 将路径转换为绝对路径
-        f.save(upload_path)#将图片保存到对应路径
-        im = Image.open(upload_path) #读取的图片所在路径，注意是28*28像素         
-        #plt.show()
-        im = im.convert('L')#转化为灰度图
-        #im=ImageEnhance.Sharpness(im).enhance(3)#图像锐化
-        im=im.resize((28,28))#转化为28×28像素
+
+        #convert the relative path to abusolute path
+        upload_path = os.path.abspath(upload_path)
+
+        #save the image to specific path
+        f.save(upload_path)
+
+        #read the images
+        im = Image.open(upload_path)          
+
+        #convert the image to grayscale image
+        im = im.convert('L')
+
+        #sharp the image
+        im=ImageEnhance.Sharpness(im).enhance(3)
+
+        #convert the image to 28*28 Pixels
+        im=im.resize((28,28))
+
+        #save the standardlized image to specific path
         im.save(upload_path)
         tv = list(im.getdata())
-        result = [(255-x)*1.0/255.0 for x in tv]#将像素点灰度值设置为0-255
+
+        result = [(255-x)*1.0/255.0 for x in tv]
         x = tf.placeholder(tf.float32, [None, 784])
         y_ = tf.placeholder(tf.float32, [None, 10])
 
@@ -96,21 +128,34 @@ def predict():
         correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         
+        #restore all the variables
         saver = tf.train.Saver()
 
         with tf.Session() as sess:
+
             sess.run(tf.global_variables_initializer())
-            saver.restore(sess, "trained_model/model.ckpt") 
+
+            #use the saved model
+            saver.restore(sess, "trained_model/model.ckpt")
+ 
             prediction=tf.argmax(y_conv,1)
             predint=prediction.eval(feed_dict={x: [result],keep_prob: 1.0}, session=sess)
+
+            #get the predicted number
             number='%d'%predint[0]
+
             predict_number='%s'%number
-            output='识别结果:'+number          
+            output='predict result:'+number      
+
+            #get the current time     
             now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            #insert the record to cassandra with values of the current time, filename and the predicted number to TABLE predictrecord, KEYSPACE mnistkeyspace
             session.execute('insert into mnistkeyspace.predictrecord(time,filename,result) values(%s,%s,%s);',[now_time,f.filename,predict_number])
             return output   
 
 if __name__ == '__main__':
+   #run the app in port 80 which is correspond to the port that exposed by docker container
    app.run(host='0.0.0.0', port=80)
 
 
