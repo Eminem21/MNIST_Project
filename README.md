@@ -12,38 +12,38 @@ Users can upload images of a hand-writing digit to the website by clicking the â
 
 ## REQUIREMENTS  
 Users are suppposed to install the following requirements before run the program.  
-1. python 3.7  
-2. docker  
-3. cassandra  
+### 1. python 3.7  
+### 2. docker  
+### 3. cassandra  
 
 ## RUN THE PROGRAM
 Users are supposed to follow the steps in order to run the program successfully.  
-1. Pull the cassandra image from docker hub  
+### 1. Pull the cassandra image from docker hub  
 ```
 docker pull cassandra
 ```
-2. Create a network bridge between two containers  
+### 2. Create a network bridge between two containers  
 ```
 docker network create mnist-project
 ```
-3. Enter the file folder of this program and build docker image of this program  
+### 3. Enter the file folder of this program and build docker image of this program  
 ```
 docker build --tag=mnistproject .
 ```
-4. Run cassandra in container  
+### 4. Run cassandra in container  
 ```
 docker run --name mnist-cassandra --network mnist-project -p 9042:9042 -d cassandra:latest
 ```
-5. Run this program in container  
+### 5. Run this program in container  
 ```
 docker run --network mnist-project -d -p 5000:80 mnistproject
 ```
-6. Use cqlsh  
+### 6. Use cqlsh  
 ```
 docker run -it --network mnist-project --rm cassandra cqlsh mnist-cassandra
 ```
-7. Open a web browser and set the url to 0.0.0.0:5000/upload  
-8. View the record  
+### 7. Open a web browser and set the url to 0.0.0.0:5000/upload  
+### 8. View the record  
 ```
 cqlsh>use mnistkeyspace;  
 cqlsh>select * from predictrecord;  

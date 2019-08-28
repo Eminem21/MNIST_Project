@@ -8,15 +8,15 @@ import tensorflow as tf
 import os
 import datetime
 
-#define the name of keyspace in cassandra
+# define the name of keyspace in cassandra
 KEYSPACE="mnistkeyspace"
 
-#connect to cassandra and create the keyspace
+# connect to cassandra and create the keyspace
 cluster = Cluster(contact_points=['mnist-cassandra'], port=9042)
 session = cluster.connect()
 session.execute("""
            CREATE KEYSPACE %s
-           WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '2' }
+           WITH replication = { 'class': 'SimpleStrategy',  'replication_factor': '2' }
            """ % KEYSPACE)
 
 #enter the keyspace and create a table
