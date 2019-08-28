@@ -8,9 +8,9 @@ The whole project is deployed in docker container, and is able to communicate wi
 Users can upload images of a hand-writing digit to the website by clicking the “choose file” button, and  click the “submit” button, then the prediction of the hand-writing digit will be shown on the web page. In addition, the record of this prediction will be saved to Cassandra, one prediction record include the time of prediction, the name of the uploaded file and the predict result.
 
 ## DEMO
-![image](https://github.com/Eminem21/MNIST_Project/demo.gif)
+![image](https://github.com/Eminem21/MNIST_Project/blob/master/demo.gif)
 
-##REQUIREMENTS  
+## REQUIREMENTS  
 Users are suppposed to install the following requirements before run the program.  
 1. python 3.7  
 2. docker  
