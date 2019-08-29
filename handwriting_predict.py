@@ -136,7 +136,7 @@ def predict():
             sess.run(tf.global_variables_initializer())
 
             #use the saved model
-            saver.restore(sess, "model/model.ckpt")
+            saver.restore(sess, "trained_model/model.ckpt")
  
             prediction=tf.argmax(y_conv,1)
             predint=prediction.eval(feed_dict={x: [result],keep_prob: 1.0}, session=sess)

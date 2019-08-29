@@ -40,7 +40,7 @@ docker run --network mnist-project -d -p 5000:80 mnistproject
 ```
 *If you want the docker container to mount data volume from the host machine, you can move the "trained_model" outside the file folder and use the following command instead."~/trained_model" have to be changed to the path of which you moved "trained_model" to.*
 ```
-docker run  --network mnist-project -p 5000:80 -v ~/trained_model:/app/model mnistproject
+docker run  --network mnist-project -p 5000:80 -v ~/trained_model:/app/trained_model mnistproject
 ```
 ### 6. Use cqlsh  
 ```
