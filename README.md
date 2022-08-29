@@ -12,9 +12,9 @@ Users can upload images of a hand-writing digit to the website by clicking the â
 
 ## REQUIREMENTS  
 Users are suppposed to install the following requirements before run the program.  
-### 1. python 3.7  
-### 2. docker  
-### 3. cassandra  
+1. python 3.7  
+2. docker  
+3. cassandra  
 
 ## RUN THE PROGRAM
 Users are supposed to follow the steps in order to run the program successfully.  
