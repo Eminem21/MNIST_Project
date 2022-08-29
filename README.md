@@ -1,4 +1,4 @@
-# MNIST_Project 
+# Handwritten Digits Recognition Project 
 This project is a hand-writing digit prediction project.
 
 ## BACKGROUD
